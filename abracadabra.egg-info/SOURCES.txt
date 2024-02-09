@@ -1,0 +1,17 @@
+LICENSE.md
+README.rst
+setup.py
+Tests/__init__.py
+abracadabra/__init__.py
+abracadabra/fingerprint.py
+abracadabra/recognise.py
+abracadabra/record.py
+abracadabra/storage.py
+abracadabra.egg-info/PKG-INFO
+abracadabra.egg-info/SOURCES.txt
+abracadabra.egg-info/dependency_links.txt
+abracadabra.egg-info/entry_points.txt
+abracadabra.egg-info/requires.txt
+abracadabra.egg-info/top_level.txt
+abracadabra/scripts/__init__.py
+abracadabra/scripts/song_recogniser.py
