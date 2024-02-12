@@ -19,4 +19,10 @@ class DataBaseManager:
     
     def get(self, query):
         return self.table.search(query)
+    
+    def update(self, query, data):
+        self.table.update(data, query)
+
+    def delete(self, query):
+        self.table.remove(query)
 
