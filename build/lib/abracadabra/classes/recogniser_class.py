@@ -4,16 +4,17 @@ from pydub import AudioSegment
 from scipy.signal import spectrogram
 from scipy.ndimage import maximum_filter
 from pydub import AudioSegment
+import os, sys
 
 import logging
 from multiprocessing import Pool, Lock, current_process
 import numpy as np
-# from db_manager import DataBaseManager
-import db_manager 
-import DataBaseManager
+from tinydb import Query
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
+from . import db_manager
+#import db_manager
 
 
-import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import fingerprint as fp  # Hier wurde der Import geändert
 from fingerprint import fingerprint_file, fingerprint_audio
@@ -22,7 +23,9 @@ import settings
 from record import record_audio
 from storage import store_song, get_matches, get_info_for_song_id, song_in_db, checkpoint_db
 
-DataBaseManager()
+db_manager_ = db_manager.DataBaseManager()
+query = Query()
+
 
 KNOWN_EXTENSIONS = ["mp3", "wav", "flac", "m4a"]
 
@@ -76,13 +79,13 @@ class Recogniser:
                 matched_song = song_id
         return matched_song
     
-    @staticmethod 
-    def compare_sounds(song_new):
-        # if song_new != song_db:
+    @staticmethod
+    def compare():
+        matches = db_manager.get_all()  
+        return_data = Recogniser.best_match(matches)
+        return return_data
 
-
-
-        pass
+        
             
 
     
