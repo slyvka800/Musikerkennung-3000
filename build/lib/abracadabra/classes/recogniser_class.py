@@ -11,7 +11,7 @@ from multiprocessing import Pool, Lock, current_process
 import numpy as np
 from tinydb import Query
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
-from . import db_manager
+import db_manager
 #import db_manager
 
 
@@ -78,6 +78,26 @@ class Recogniser:
                 best_score = score
                 matched_song = song_id
         return matched_song
+    
+    @staticmethod
+    def recognise_song(filename):
+        """Recognises a pre-recorded sample.
+
+        Recognises the sample stored at the path ``filename``. The sample can be in any of the
+        formats in :data:`recognise.KNOWN_FORMATS`.
+
+        :param filename: Path of file to be recognised.
+        :returns: :func:`~abracadabra.recognise.get_song_info` result for matched song or None.
+        :rtype: tuple(str, str, str)
+        """
+        hashes = fingerprint_file(filename)
+        matches = get_matches(hashes)
+        matched_song = Recogniser.best_match(matches)
+        info = get_info_for_song_id(matched_song)
+        if info is not None:
+            return info
+        return matched_song
+
     
     @staticmethod
     def compare():
