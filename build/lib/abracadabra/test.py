@@ -11,11 +11,15 @@ db_manager.insert({'name': 'test.wav', 'hash': fp.fingerprint_file("../../../Sam
 #db_manager.table.delete()
 
 recogniser_class_ = Recogniser()
-print("compare function")
+#print("compare function")
 
 #db_manager.insert({'name': 'test_cpy.wav', 'hash': fp.fingerprint_file("../../../Samples/test.wav")})
 
-fingerprint_hash = fp.fingerprint_file("../../../Samples/test.wav")
+fingerprint_ = fp.fingerprint_file("../../../Samples/test.wav")
 
-data = recogniser_class_.compare()
-print(data)
+
+matches = db_manager.get_all() ## braucht man das ???
+        #return_data = Recogniser.score_match(matches)
+return_data = recogniser_class_.recognise_song("../../../Samples/test.wav")
+#data = recogniser_class_.compare()
+#print(data)
