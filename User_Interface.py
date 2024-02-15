@@ -1,9 +1,6 @@
 import streamlit as st
-from classes import Song,Hash
-from gen_functions import *
 from pydub import AudioSegment
 from tempfile import NamedTemporaryFile
-from duckduckgo_search import DDGS
 
 pagetitle = "Musikerkennung42069"
 
@@ -59,7 +56,7 @@ with col1:
         with st.container(border=True):
             st.write("## Recognize from recording")
             if st.button('Start Recording'):
-                record_audio('recording.wav', 10)
+                #function to record audio from microphone and save it in recording.wav
                 #st.write("Recording complete")
                 st.audio('recording.wav', format='audio/wav')
                 #insert logic to recognize song from recording here
