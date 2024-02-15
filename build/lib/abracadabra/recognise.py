@@ -92,9 +92,9 @@ def score_match(offsets):
     binwidth = 0.5
     tks = list(map(lambda x: x[0] - x[1], offsets))
     hist, _ = np.histogram(tks,
-                           bins=np.arange(int(min(tks)),
-                                          int(max(tks)) + binwidth + 1,
-                                          binwidth))
+                            bins=np.arange(int(min(tks)),
+                                            int(max(tks)) + binwidth + 1,
+                                            binwidth))
     return np.max(hist)
 
 
@@ -104,7 +104,7 @@ def best_match(matches):
     Scores each song in the matches dictionary and then returns the song_id with the best score.
 
     :param matches: Dictionary of song_id to list of offset pairs (db_offset, sample_offset)
-       as returned by :func:`~abracadabra.Storage.storage.get_matches`.
+    as returned by :func:`~abracadabra.Storage.storage.get_matches`.
     :returns: song_id with the best score.
     :rtype: str
     """

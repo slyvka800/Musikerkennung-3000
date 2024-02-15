@@ -1,4 +1,4 @@
-from tinydb import TinyDB
+from tinydb import TinyDB, where, Query
 
 class DataBaseManager:
     _instance = None
@@ -11,21 +11,43 @@ class DataBaseManager:
     def __init__(self):
         if not hasattr(self, 'db'):
             self.db = TinyDB("music_hashes.json")
-        if not hasattr(self, 'table'):
-            self.table = self.db.table("hashes")
+        if not hasattr(self, 'hashes'):
+            self.hashes = self.db.table("hashes")
+        if not hasattr(self, 'song_info'):
+            self.song_info = self.db.table('song_info')
 
-    def insert(self, data):
-        self.table.insert(data)
+    def insert_fingerprint(self, fingerprints):
+        for fingerprint in fingerprints:
+            data = {'hash': fingerprint[0], 'timeoffset': fingerprint[1], 'id': fingerprint[2]}
+            self.hashes.insert(data)
     
-    def get(self, query):
-        return self.table.search(query)
+    def get_hash(self, query):
+        return self.hashes.search(query)
     
-    def get_all(self):
-        return self.table.all()
+    def get_all_hashes(self):
+        return self.hashes.all()
     
-    def update(self, query, data):
-        self.table.update(data, query)
+    def update_hash(self, query, data):
+        self.hashes.update(data, query)
 
-    def delete(self, query):
-        self.table.remove(query)
+    def delete_hash(self, query):
+        self.hashes.remove(query)
+
+    def insert_song_info(self, song, id):
+        self.song_info.insert({'song': song, 'id': id})
+
+    def get_song_info(self, id):
+        info = self.song_info.search(Query().id == id)
+        return info['song']
+
+    def get_matches(self, hashes):
+        h_dict = {}
+        for h, t, _ in hashes:
+            h_dict[h] = t
+        in_values = f"({','.join([str(h[0]) for h in hashes])})"
+        self.table.search(where('hash') )
+        result_dict = defaultdict(list)
+        for r in results:
+            result_dict[r[2]].append((r[1], h_dict[r[0]]))
+        return result_dict
 

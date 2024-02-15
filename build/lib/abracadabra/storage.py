@@ -2,7 +2,7 @@ import uuid
 import sqlite3
 from collections import defaultdict
 from contextlib import contextmanager
-from . import settings
+import settings
 
 
 @contextmanager
