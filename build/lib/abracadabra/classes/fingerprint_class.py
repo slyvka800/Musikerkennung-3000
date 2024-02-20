@@ -10,7 +10,7 @@ from multiprocessing import Pool, Lock, current_process
 import numpy as np
 #from tinytag import TinyTag
 
-# Importing modules from the scripts package
+# Importing modules "from" the scripts package
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import fingerprint as fp  # Hier wurde der Import geändert
@@ -97,23 +97,23 @@ class Fingerprinting:
                 ))
         return hashes
 
-    @staticmethod
-    def match_query(self, query_hashes, match_time_tolerance):
-        """
-        Matches query hashes against stored hashes in the database.
-        Args -> query_hashes (list)-> List of query hashes.
-        Returns -> dict-> Dictionary containing matched song IDs and their matched time offsets.
-        """
-        matched_songs = {}
-        for hash_value, query_time_offset in query_hashes:
-            if hash_value in self.database:
-                for stored_time_offset, song_id in self.database[hash_value]:
-                    time_difference = query_time_offset - stored_time_offset
-                    if abs(time_difference) <= settings.match_time_tolerance:
-                        if song_id not in matched_songs:
-                            matched_songs[song_id] = []
-                        matched_songs[song_id].append(stored_time_offset)
-        return matched_songs
+    #@staticmethod
+    # def match_query(self, query_hashes, match_time_tolerance):
+    #     """
+    #     Matches query hashes against stored hashes in the database.
+    #     Args -> query_hashes (list)-> List of query hashes.
+    #     Returns -> dict-> Dictionary containing matched song IDs and their matched time offsets.
+    #     """
+    #     matched_songs = {}
+    #     for hash_value, query_time_offset in query_hashes:
+    #         if hash_value in self.database:
+    #             for stored_time_offset, song_id in self.database[hash_value]:
+    #                 time_difference = query_time_offset - stored_time_offset
+    #                 if abs(time_difference) <= settings.match_time_tolerance:
+    #                     if song_id not in matched_songs:
+    #                         matched_songs[song_id] = []
+    #                     matched_songs[song_id].append(stored_time_offset)
+    #     return matched_songs
     
 
     @staticmethod
