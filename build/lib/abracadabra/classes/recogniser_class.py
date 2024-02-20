@@ -64,11 +64,6 @@ class Recogniser:
             return info
         return matched_song
 
-    # def compare(self):
-    #     matches = self.db_manager.get_all_hashes()
-    #     return_data = self.best_match(matches)
-    #     return return_data
-
         
             
 
