@@ -10,9 +10,8 @@ query = Query()
 
 db_manager = DataBaseManager()
 
-# fingerprint = fp.fingerprint_file("../../../Samples/test.wav")
-# db_manager.store_song('test.wav', fingerprint)
-# print(db_manager.get_matches(fingerprint))
+# fingerprint = Fingerprinting.fingerprint_file("../../../Samples/337146__erokia__timelift-rhodes-piano.wav")
+# db_manager.store_song('337146__erokia__timelift-rhodes-piano.wav', fingerprint)
 
 recogniser = Recogniser()
-print(recogniser.recognise_song("../../../Samples/test.wav"))
+print(recogniser.recognise_song("../../../Samples/336858__mattc90__matts-emotional-ambient-synthscape-100-bpm.wav"))

@@ -26,9 +26,10 @@ class DataBaseManager:
             self.__insert_song_info(new_song_name, id)
 
     def __insert_fingerprint(self, fingerprints):
+        data = []
         for fingerprint in fingerprints:
-            data = {'hash': fingerprint[0], 'timeoffset': fingerprint[1], 'id': fingerprint[2]}
-            self.hashes.insert(data)
+            data.append({'hash': fingerprint[0], 'timeoffset': fingerprint[1], 'id': fingerprint[2]})
+        self.hashes.insert_multiple(data)
     
     def get_hash(self, query):
         return self.hashes.search(query)
@@ -47,7 +48,9 @@ class DataBaseManager:
 
     def get_song_info(self, id):
         info = self.song_info.search(Query().id == id)
-        return info['song']
+        if len(info) > 0:
+            return info[0]['song']
+        return None
     
     def delete_song_id(self, id):
         self.song_info.remove(doc_ids=[id])
