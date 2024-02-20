@@ -70,6 +70,26 @@ class Fingerprinting:
         return hash((p1[0], p2[0], p2[1]-p2[1]))  # Nur die Zeit- und Frequenzwerte werden verwendet
     
     @staticmethod
+    def hash_point_pair(p1, p2):
+        """Helper function to generate a hash from two time/frequency points."""
+        return hash((p1[0], p2[0], p2[1]-p2[1]))
+
+    @staticmethod
+    def target_zone(anchor, points, width, height, t):
+  
+        x_min = anchor[1] + t
+        x_max = x_min + width
+        y_min = anchor[0] - (height*0.5)
+        y_max = y_min + height
+        for point in points:
+            if point[0] < y_min or point[0] > y_max:
+                continue
+            if point[1] < x_min or point[1] > x_max:
+                continue
+            yield point
+
+    
+    @staticmethod
     def store_hashes(self, hashes):
         """
         Store hashes in the database.
@@ -87,11 +107,11 @@ class Fingerprinting:
         hashes = []
         song_id = uuid.uuid5(uuid.NAMESPACE_OID, filename).int
         for anchor in points:
-            for target in fp.target_zone(
+            for target in Fingerprinting.target_zone(
                 anchor, points, settings.TARGET_T, settings.TARGET_F, settings.TARGET_START
             ):
                 hashes.append((
-                    fp.hash_point_pair(anchor, target),
+                    Fingerprinting.hash_point_pair(anchor, target),
                     anchor[1],
                     str(song_id)
                 ))
@@ -138,7 +158,7 @@ if __name__ == "__main__":
     audio_file = "../../../../Samples/test.wav"
     audio = AudioSegment.from_wav(audio_file)
 
-    print(fp.fingerprint_file(audio_file))
+    print(Fingerprinting.fingerprint_file(audio_file))
     print("our function:")
     print(Fingerprinting.fingerprint_file(audio_file))
 
