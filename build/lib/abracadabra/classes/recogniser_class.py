@@ -11,21 +11,14 @@ from multiprocessing import Pool, Lock, current_process
 import numpy as np
 from tinydb import Query
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
-import db_manager
-#import db_manager
-
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import fingerprint as fp  # Hier wurde der Import geändert
-from fingerprint import fingerprint_file, fingerprint_audio
 import storage
 import settings
 from record import record_audio
-from storage import store_song, get_matches, get_info_for_song_id, song_in_db, checkpoint_db
-
-db_manager_ = db_manager.DataBaseManager()
-query = Query()
-
+from db_manager import DataBaseManager
+from fingerprint_class import Fingerprinting
 
 KNOWN_EXTENSIONS = ["mp3", "wav", "flac", "m4a"]
 
@@ -33,10 +26,11 @@ KNOWN_EXTENSIONS = ["mp3", "wav", "flac", "m4a"]
 class Recogniser:
 
     def __init__(self):
-        pass
+        self.db_manager = DataBaseManager()
+        self.query = Query()
+        self.fingerprinting = Fingerprinting
 
-    @staticmethod
-    def score_match(offsets):
+    def score_match(self, offsets):
         """Score a matched song.
 
         Calculates a histogram of the deltas between the time offsets of the hashes from the
@@ -56,8 +50,7 @@ class Recogniser:
                                             binwidth))
         return np.max(hist)
 
-    @staticmethod
-    def best_match(matches):
+    def best_match(self, matches):
         """For a dictionary of song_id: offsets, returns the best song_id.
 
         Scores each song in the matches dictionary and then returns the song_id with the best score.
@@ -73,14 +66,13 @@ class Recogniser:
             if len(offsets) < best_score:
                 # can't be best score, avoid expensive histogram
                 continue
-            score = Recogniser.score_match(offsets)
+            score = self.score_match(offsets)
             if score > best_score:
                 best_score = score
                 matched_song = song_id
         return matched_song
     
-    @staticmethod
-    def recognise_song(filename):
+    def recognise_song(self, filename):
         """Recognises a pre-recorded sample.
 
         Recognises the sample stored at the path ``filename``. The sample can be in any of the
@@ -90,19 +82,17 @@ class Recogniser:
         :returns: :func:`~abracadabra.recognise.get_song_info` result for matched song or None.
         :rtype: tuple(str, str, str)
         """
-        hashes = fingerprint_file(filename)
-        matches = get_matches(hashes)
-        matched_song = Recogniser.best_match(matches)
-        info = get_info_for_song_id(matched_song)
+        hashes = self.fingerprinting.fingerprint_file(filename)
+        matches = self.db_manager.get_matches(hashes)
+        matched_song = self.best_match(matches)
+        info = self.db_manager.get_song_info(matched_song)
         if info is not None:
             return info
         return matched_song
 
-    
-    @staticmethod
-    def compare():
-        matches = db_manager.get_all()  
-        return_data = Recogniser.best_match(matches)
+    def compare(self):
+        matches = self.db_manager.get_all_hashes()
+        return_data = self.best_match(matches)
         return return_data
 
         
