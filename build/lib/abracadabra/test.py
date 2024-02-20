@@ -8,8 +8,7 @@ import storage
 query = Query()
 
 db_manager = DataBaseManager()
-# db_manager.insert({'name': 'test.wav', 'hash': fp.fingerprint_file("../../../Samples/test.wav")})
-# db_manager.delete(query.name == 'test.wav')
+
 fingerprint = fp.fingerprint_file("../../../Samples/test.wav")
-db_manager.insert_fingerprint(fingerprint)
-db_manager.insert_song_info('test.wav', fingerprint[0][2])
+# db_manager.store_song('test.wav', fingerprint)
+print(db_manager.get_matches(fingerprint))
