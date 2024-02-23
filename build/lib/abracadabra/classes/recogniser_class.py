@@ -72,11 +72,10 @@ class Recogniser:
     def recognise_song(self, filename):
 
         hashes = self.fingerprinting.fingerprint_file(filename)
-        #print(f"hashes: {hashes}")
 
         matches = self.db_manager.get_matches(hashes)
-        #print(f"macthes: {matches}")
-
+        if not matches:
+            return None
         matched_song = self.best_match(matches)
         #print(f"macthed_song: {matched_song}")
 

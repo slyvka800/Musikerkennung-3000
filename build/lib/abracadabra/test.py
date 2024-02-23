@@ -14,4 +14,4 @@ db_manager = DataBaseManager()
 # db_manager.store_song('337146__erokia__timelift-rhodes-piano.wav', fingerprint)
 
 recogniser = Recogniser()
-print(recogniser.recognise_song("../../../Samples/336858__mattc90__matts-emotional-ambient-synthscape-100-bpm.wav"))
+print(recogniser.recognise_song("../../../../Samples/337146__erokia__timelift-rhodes-piano.wav"))

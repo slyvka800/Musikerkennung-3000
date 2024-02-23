@@ -61,8 +61,17 @@ class DataBaseManager:
         for h, t, _ in new_hashes_data:
             h_dict[h] = t
             new_hashes.append(h)
+
+        # print(new_hashes[0])
         
         results = self.hashes.search(Query().hash.one_of(new_hashes))
+
+        # check if enough mathces have been found
+        threshold = 800 
+        print(len(results))
+        if len(results) < threshold:
+            return None
+        
         result_dict = defaultdict(list)
         for r in results:
             result_dict[r['id']].append((r['timeoffset'], h_dict[r['hash']]))
