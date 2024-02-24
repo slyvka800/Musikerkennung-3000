@@ -2,25 +2,53 @@ import streamlit as st
 from pydub import AudioSegment
 import pyglet ####
 from pyglet.media import Player####
-from record import record_audio ####
-
+ 
 from tempfile import NamedTemporaryFile
 from recogniser_class import Recogniser
 from fingerprint_class import Fingerprinting
 from db_manager import DataBaseManager
 import tempfile
-import os
+import os,sys
+
+#import sounddevice 
+import numpy as np
+#import soundfile as sf
+# import librosa
+# import librosa.display
+# import matplotlib.pyplot as plt
 
 pagetitle = "Musikerkennung42069"
 
 recogniser = Recogniser()
 db_manager = DataBaseManager()
+fingerprint_ = Fingerprinting
 
-def display_song(song_path):  ####
-    music = Player()
-    music.queue(pyglet.media.load(song_path))
-    music.play()
+# def record_audio(duration=10, sr=44100):
+#     print("Recording...")
+#     audio = sounddevice.rec(int(duration * sr), samplerate=sr, channels=1, dtype='float32')
+#     sounddevice.wait()
+#     print("Recording finished.")
+#     return audio
+
+# def display_song(song_path):  ####
+#     music = Player()
+#     music.queue(pyglet.media.load(song_path))
+#     music.play()
+#     pyglet.app.run()
+
+# def display_song_in_thread(song_path):
+#     thread = threading.Thread(target=display_song, args=(song_path,))
+#     thread.start()
+
+def display_song(song_path):
+    player = Player()
+    music = pyglet.media.load(song_path)
+
+    player.queue(music)
+    player.play()
+
     pyglet.app.run()
+
 
 st.set_page_config(layout="wide", page_title=pagetitle, page_icon=":headphones:")
 st.write(f"# {pagetitle}")
@@ -53,7 +81,25 @@ with col1:
                     fingerprint = Fingerprinting.fingerprint_file(path)
                     db_manager.store_song(title, fingerprint)
 
-                    st.success("Song added to library") #somehow this does not work
+
+                    
+                    ##Ich habe die folgenden Zeilen feur die Tabelle der Musikstücken hinzugefügte 
+                    ###von der Zeile bis 'st.rerun()'.
+                    
+
+                    st.sidebar.success("Song added to library") # ich habe sidebar noch hinzugefuegt damit es funktioniert
+                    with st.container(border=True):
+
+                        st.write("## Music Library") 
+                        print(selected_file.file_id)                 
+                        songs = db_manager.get_song_info(selected_file.file_id)  
+                        st.write("### List of Songs")
+                        songs_table = []
+                        for song in songs:
+                            songs_table.append([song['title'], song['artist'], song['album']])
+                        st.table(songs_table)
+                        
+
                     st.rerun()
                 else:
                     st.error("Must upload a file to teach a song.")
@@ -71,7 +117,7 @@ with col1:
                 #song info should be read from a separate table in the database
                 #if no match is found, an error message has to be displayed
                 print("Recognizing song...") #debug
-                if selected_snippet:
+                if selected_snippet:    
                     temp_dir = tempfile.mkdtemp()
                     path = os.path.join(temp_dir, selected_snippet.name)
                     with open(path, "wb") as f:
@@ -81,6 +127,8 @@ with col1:
                     print(recognition)
                     if recognition:
                         st.success(f"Song {recognition} recognized") 
+                        display_song(path)
+
                     else:
                         st.error("No matches found, either teach the song or upload a different snippet.")
 
@@ -98,8 +146,15 @@ with col1:
                 print ("Recognizing song from recording...") #debug
                 #if found:
                 print("Song recognized") #debug
+                # plt.figure(figsize=(14, 5))
+                # librosa.display.waveshow(y, sr=sr)
+                # plt.xlabel('Zeit (s)')
+                # plt.ylabel('Amplitude')
+                # plt.title('Waveform des Musikstücks')
+                # plt.show()
                 #else:
                 print("Song ID not found in the database.")#debug
+           
 
     else :
         st.write(f"## About {pagetitle}")
