@@ -1,7 +1,9 @@
 import streamlit as st
 from pydub import AudioSegment
-import pyglet ####
-from pyglet.media import Player####
+# import pyglet ####
+# from pyglet.media import Player####
+import matplotlib.pyplot as plt
+
  
 from tempfile import NamedTemporaryFile
 from recogniser_class import Recogniser
@@ -23,31 +25,14 @@ recogniser = Recogniser()
 db_manager = DataBaseManager()
 fingerprint_ = Fingerprinting
 
-# def record_audio(duration=10, sr=44100):
-#     print("Recording...")
-#     audio = sounddevice.rec(int(duration * sr), samplerate=sr, channels=1, dtype='float32')
-#     sounddevice.wait()
-#     print("Recording finished.")
-#     return audio
-
-# def display_song(song_path):  ####
-#     music = Player()
-#     music.queue(pyglet.media.load(song_path))
-#     music.play()
-#     pyglet.app.run()
-
-# def display_song_in_thread(song_path):
-#     thread = threading.Thread(target=display_song, args=(song_path,))
-#     thread.start()
-
-def display_song(song_path):
-    player = Player()
-    music = pyglet.media.load(song_path)
-
-    player.queue(music)
-    player.play()
-
-    pyglet.app.run()
+def process_audio_for_histogram(audio_data, num_bins=10):
+    # Converts audio data to numpy array (assuming mono audio)
+    audio_array = np.array(audio_data)
+    
+    # Calculates histogram
+    histogram, bin_edges = np.histogram(audio_array, bins=num_bins)
+    
+    return histogram, bin_edges
 
 
 st.set_page_config(layout="wide", page_title=pagetitle, page_icon=":headphones:")
@@ -80,26 +65,8 @@ with col1:
                     
                     fingerprint = Fingerprinting.fingerprint_file(path)
                     db_manager.store_song(title, fingerprint)
-
-
                     
-                    ##Ich habe die folgenden Zeilen feur die Tabelle der Musikstücken hinzugefügte 
-                    ###von der Zeile bis 'st.rerun()'.
-                    
-
-                    st.sidebar.success("Song added to library") # ich habe sidebar noch hinzugefuegt damit es funktioniert
-                    with st.container(border=True):
-
-                        st.write("## Music Library") 
-                        print(selected_file.file_id)                 
-                        songs = db_manager.get_song_info(selected_file.file_id)  
-                        st.write("### List of Songs")
-                        songs_table = []
-                        for song in songs:
-                            songs_table.append([song['title'], song['artist'], song['album']])
-                        st.table(songs_table)
-                        
-
+                    st.sidebar.success("Song added to library") # ich habe sidebar noch hinzugefuegt 
                     st.rerun()
                 else:
                     st.error("Must upload a file to teach a song.")
@@ -127,7 +94,35 @@ with col1:
                     print(recognition)
                     if recognition:
                         st.success(f"Song {recognition} recognized") 
-                        display_song(path)
+
+
+
+                        with st.container(border=True):
+
+                            st.write("## Music Library") 
+
+                            songs = db_manager.get_song_info(selected_snippet.file_id)
+                            print(f"id: {selected_snippet.file_id}")                 
+                            print(f"songs: {songs}")  
+                            st.write("### List of Songs")
+                            songs_table = []
+                            for song in songs:
+                                songs_table.append([song['title'], song['artist'], song['album']])
+                            st.table(songs_table)
+
+                        #  # Processes audio data for histogram
+                        # histogram, bin_edges = process_audio_for_histogram(recognition, num_bins=10)
+            
+                        # # Plots histogram
+                        # plt.bar(bin_edges[:-1], histogram, width=1)  # Plots histogram as bar chart
+
+                        # plt.hist(recognition, bins=10)  # Creates the histogram
+                        # plt.xlabel('X-axis label')
+                        # plt.ylabel('Y-axis label')
+                        # plt.title('Histogram')
+
+                        # st.pyplot()
+
 
                     else:
                         st.error("No matches found, either teach the song or upload a different snippet.")
