@@ -43,15 +43,7 @@ class Recogniser:
         return np.max(hist)
     
     def best_match(self, matches):
-        """For a dictionary of song_id: offsets, returns the best song_id.
 
-        Scores each song in the matches dictionary and then returns the song_id with the best score.
-
-        :param matches: Dictionary of song_id to list of offset pairs (db_offset, sample_offset)
-        as returned by :func:`~abracadabra.Storage.storage.get_matches`.
-        :returns: song_id with the best score.
-        :rtype: str
-        """
         matched_song = None
         best_score = 0
         for song_id, offsets in matches.items():
