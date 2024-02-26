@@ -73,6 +73,7 @@ class Recogniser:
 
         if matched_song:
             info = self.db_manager.get_song_info(matched_song)
+            print("info", info)
         else: 
             info = None
         #print(f"info: {info}")

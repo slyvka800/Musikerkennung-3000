@@ -17,13 +17,13 @@ class DataBaseManager:
         if not hasattr(self, 'song_info'):
             self.song_info = self.db.table('song_info')
 
-    def store_song(self, new_song_name, new_song_hashes):
+    def store_song(self, title, new_song_hashes, artist, album):
         # check if song doesn't exist in db and store it
         id = new_song_hashes[0][2]
         result = self.song_info.search(Query().id == id)
         if len(result) == 0:
             self.__insert_fingerprint(new_song_hashes)
-            self.__insert_song_info(new_song_name, id)
+            self.__insert_song_info(id, title, artist, album)
 
     def __insert_fingerprint(self, fingerprints):
         data = []
@@ -43,13 +43,13 @@ class DataBaseManager:
     def delete_hash(self, query):
         self.hashes.remove(query)
 
-    def __insert_song_info(self, song, id):
-        self.song_info.insert({'song': song, 'id': id})
+    def __insert_song_info(self, id, title = '', artist = '', album = ''):
+        self.song_info.insert({'id': id, 'title': title, 'artist': artist, 'album': album})
 
     def get_song_info(self, id):
         info = self.song_info.search(Query().id == id)
         if len(info) > 0:
-            return info[0]['song']
+            return info[0]
         return None
     
     def delete_song_id(self, id):

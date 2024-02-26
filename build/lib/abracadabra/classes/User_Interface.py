@@ -15,6 +15,7 @@ import librosa
 
 #import sounddevice 
 import numpy as np
+import pandas as pd
 #import soundfile as sf
 # import librosa
 # import librosa.display
@@ -87,7 +88,7 @@ with col1:
                             f.write(selected_file.getvalue())
                     
                     fingerprint = Fingerprinting.fingerprint_file(path)
-                    db_manager.store_song(title, fingerprint)
+                    db_manager.store_song(title, fingerprint, artist, album)
                     
                     st.sidebar.success("Song added to library") # ich habe sidebar noch hinzugefuegt 
                     st.rerun()
@@ -116,22 +117,26 @@ with col1:
                     recognition = recogniser.recognise_song(path)
                     print(recognition)
                     if recognition:
-                        st.success(f"Song {recognition} recognized") 
+                        print("recognition", recognition)
+                        # st.success(f"Song {recognition['title']} recognized") 
 
+                        with st.container(border=True):
 
+                            st.write("## Music Library") 
 
-                        # with st.container(border=True):
+                            # songs = db_manager.get_song_info(selected_snippet.file_id)
+                            # print(f"songs: {songs}")  
+                            st.write("### List of Songs")
+                            # songs_table = []
+                            # for song in songs:
+                            # songs_table.append([recognition['title'], recognition['artist'], recognition['album']])
+                            df = pd.DataFrame({
+                                'Title': recognition['title'],
+                                'Album': recognition['album'],
+                                'Artist': recognition['artist']
+                            }, index=[0])
+                            st.table(df)
 
-                        #     st.write("## Music Library") 
-
-                        #     songs = db_manager.get_song_info(selected_snippet.file_id)
-                        #     print(f"id: {selected_snippet.file_id}")                 
-                        #     print(f"songs: {songs}")  
-                        #     st.write("### List of Songs")
-                        #     songs_table = []
-                        #     for song in songs:
-                        #         songs_table.append([song['title'], song['artist'], song['album']])
-                        #     st.table(songs_table)
 
                         #  # Processes audio data for histogram
                         # histogram, bin_edges = process_audio_for_histogram(recognition, num_bins=10)
@@ -154,8 +159,6 @@ with col1:
                             plt.ylabel('Frequency')
                             plt.title('Histogram of Recognized Song')
                             st.pyplot(fig)  # Display the histogram in Streamlit
-
-                                   
 
         with st.container(border=True):
             st.write("## Recognize from recording")
