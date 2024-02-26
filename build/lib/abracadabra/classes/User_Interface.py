@@ -11,6 +11,7 @@ from fingerprint_class import Fingerprinting
 from db_manager import DataBaseManager
 import tempfile
 import os,sys
+import librosa
 
 #import sounddevice 
 import numpy as np
@@ -36,6 +37,16 @@ def process_audio_for_histogram(audio_data, num_bins=10):
     except Exception as e:
         st.error(f"Error processing audio data: {e}")
         return None, None
+    
+
+def read_audio_file(audio_file_path, sr=44100):
+    try:
+        # Load audio file
+        audio_data, _ = librosa.load(audio_file_path, sr=sr)
+        return audio_data
+    except Exception as e:
+        print(f"Error reading audio file: {e}")
+        return None
 
 # def process_audio_for_histogram(audio_data, num_bins=10):
 #     # Converts audio data to numpy array (assuming mono audio)
@@ -134,14 +145,15 @@ with col1:
                         # plt.title('Histogram')
 
                         # st.pyplot()
-                        histogram, bin_edges = process_audio_for_histogram(recognition, num_bins=10)
+                        histogram, bin_edges = process_audio_for_histogram(read_audio_file(path), num_bins=10)
                         if histogram is not None and bin_edges is not None:
                             # Plot histogram
+                            fig, ax = plt.subplots()
                             plt.bar(bin_edges[:-1], histogram, width=1)
                             plt.xlabel('Bins')
                             plt.ylabel('Frequency')
                             plt.title('Histogram of Recognized Song')
-                            st.pyplot()  # Display the histogram in Streamlit
+                            st.pyplot(fig)  # Display the histogram in Streamlit
 
                                    
 
@@ -176,7 +188,6 @@ with col1:
 
 with col2:
     st.write("Include Output, History and Song Info here")
-
 
 
 
