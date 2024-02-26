@@ -16,6 +16,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import fingerprint as fp  # Hier wurde der Import geändert
 import storage
 import settings
+
 from record import record_audio
 from db_manager import DataBaseManager
 from fingerprint_class import Fingerprinting
@@ -32,39 +33,70 @@ class Recogniser:
 
     def score_match(self, offsets):
 
+       # Use bins spaced 0.5 seconds apart
         binwidth = 0.5
-        offsets_list = list(map(lambda x: x[0] - x[1], offsets))
-        hist, _ = np.histogram(offsets_list, bins=np.arange(int(min(offsets_list)),
-                                            int(max(offsets_list)) + binwidth + 1,
-                                            binwidth))
+        tks = list(map(lambda x: x[0] - x[1], offsets))
+        hist, _ = np.histogram(tks,
+                                bins=np.arange(int(min(tks)),
+                                                int(max(tks)) + binwidth + 1,
+                                                binwidth))
         return np.max(hist)
-
+    
     def best_match(self, matches):
- 
+        """For a dictionary of song_id: offsets, returns the best song_id.
+
+        Scores each song in the matches dictionary and then returns the song_id with the best score.
+
+        :param matches: Dictionary of song_id to list of offset pairs (db_offset, sample_offset)
+        as returned by :func:`~abracadabra.Storage.storage.get_matches`.
+        :returns: song_id with the best score.
+        :rtype: str
+        """
         matched_song = None
         best_score = 0
         for song_id, offsets in matches.items():
-
-            if len(offsets) >= best_score and self.score_match(offsets) > best_score:
-                best_score = self.score_match(offsets)
+            if len(offsets) < best_score:
+                # can't be best score, avoid expensive histogram
+                continue
+            score = self.score_match(offsets)
+            if score > best_score:
+                best_score = score
                 matched_song = song_id
-                
-        return matched_song
+        print(f"score:{score}")
+        if score > 300:
+            return matched_song
+        else:
+            return None
+
     
     def recognise_song(self, filename):
 
         hashes = self.fingerprinting.fingerprint_file(filename)
+        #print(f"hashes: {hashes}")
+
         matches = self.db_manager.get_matches(hashes)
+        #print(f"macthes: {matches}")
+
         matched_song = self.best_match(matches)
-        info = self.db_manager.get_song_info(matched_song)
+        #print(f"macthed_song: {matched_song}")
+
+        if matched_song:
+            info = self.db_manager.get_song_info(matched_song)
+        else: 
+            info = None
+        #print(f"info: {info}")
+
         if info is not None:
+            #print("in if !")
             return info
+        #print("!matched song")
         return matched_song
 
     def compare(self):
         matches = self.db_manager.get_all_hashes()
         return_data = self.best_match(matches)
         return return_data
+    
 
         
             
