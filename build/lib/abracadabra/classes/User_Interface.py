@@ -26,13 +26,25 @@ db_manager = DataBaseManager()
 fingerprint_ = Fingerprinting
 
 def process_audio_for_histogram(audio_data, num_bins=10):
-    # Converts audio data to numpy array (assuming mono audio)
-    audio_array = np.array(audio_data)
+    try:
+        # Convert audio data to numpy array
+        audio_array = np.array(audio_data)
+
+        # Calculate histogram
+        histogram, bin_edges = np.histogram(audio_array, bins=num_bins)
+        return histogram, bin_edges
+    except Exception as e:
+        st.error(f"Error processing audio data: {e}")
+        return None, None
+
+# def process_audio_for_histogram(audio_data, num_bins=10):
+#     # Converts audio data to numpy array (assuming mono audio)
+#     audio_array = np.array(audio_data)
     
-    # Calculates histogram
-    histogram, bin_edges = np.histogram(audio_array, bins=num_bins)
+#     # Calculates histogram
+#     histogram, bin_edges = np.histogram(audio_array, bins=num_bins)
     
-    return histogram, bin_edges
+#     return histogram, bin_edges
 
 
 st.set_page_config(layout="wide", page_title=pagetitle, page_icon=":headphones:")
@@ -97,18 +109,18 @@ with col1:
 
 
 
-                        with st.container(border=True):
+                        # with st.container(border=True):
 
-                            st.write("## Music Library") 
+                        #     st.write("## Music Library") 
 
-                            songs = db_manager.get_song_info(selected_snippet.file_id)
-                            print(f"id: {selected_snippet.file_id}")                 
-                            print(f"songs: {songs}")  
-                            st.write("### List of Songs")
-                            songs_table = []
-                            for song in songs:
-                                songs_table.append([song['title'], song['artist'], song['album']])
-                            st.table(songs_table)
+                        #     songs = db_manager.get_song_info(selected_snippet.file_id)
+                        #     print(f"id: {selected_snippet.file_id}")                 
+                        #     print(f"songs: {songs}")  
+                        #     st.write("### List of Songs")
+                        #     songs_table = []
+                        #     for song in songs:
+                        #         songs_table.append([song['title'], song['artist'], song['album']])
+                        #     st.table(songs_table)
 
                         #  # Processes audio data for histogram
                         # histogram, bin_edges = process_audio_for_histogram(recognition, num_bins=10)
@@ -122,10 +134,16 @@ with col1:
                         # plt.title('Histogram')
 
                         # st.pyplot()
+                        histogram, bin_edges = process_audio_for_histogram(recognition, num_bins=10)
+                        if histogram is not None and bin_edges is not None:
+                            # Plot histogram
+                            plt.bar(bin_edges[:-1], histogram, width=1)
+                            plt.xlabel('Bins')
+                            plt.ylabel('Frequency')
+                            plt.title('Histogram of Recognized Song')
+                            st.pyplot()  # Display the histogram in Streamlit
 
-
-                    else:
-                        st.error("No matches found, either teach the song or upload a different snippet.")
+                                   
 
         with st.container(border=True):
             st.write("## Recognize from recording")
