@@ -48,7 +48,6 @@ class Recogniser:
         best_score = 0
         for song_id, offsets in matches.items():
             if len(offsets) < best_score:
-                # can't be best score, avoid expensive histogram
                 continue
             score = self.score_match(offsets)
             if score > best_score:
