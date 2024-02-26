@@ -3,6 +3,10 @@ from pydub import AudioSegment
 # import pyglet ####
 # from pyglet.media import Player####
 import matplotlib.pyplot as plt
+from youtubesearchpython import VideosSearch
+
+
+ 
 from tempfile import NamedTemporaryFile
 from recogniser_class import Recogniser
 from fingerprint_class import Fingerprinting
@@ -45,6 +49,19 @@ microfon = Microfon
 #         return None, None
     
 
+def read_audio_file(audio_file_path, sr=44100):
+    try:
+        # Load audio file
+        audio_data, _ = librosa.load(audio_file_path, sr=sr)
+        return audio_data
+    except Exception as e:
+        print(f"Error reading audio file: {e}")
+        return None
+    
+def search_youtube(query):
+    videosSearch = VideosSearch(query, limit=5)
+    results = videosSearch.result()
+    return results['result']
 # def read_audio_file(audio_file_path, sr=44100):
 #     try:
 #         # Load audio file
@@ -171,9 +188,14 @@ with col1:
                             plt.ylabel('Frequency')
                             plt.title('Histogram of Recognized Song')
                             st.pyplot(fig)  # Display the histogram in Streamlit
-     
+
+                        videos = search_youtube(f"{recognition['title']} {recognition['album']} {recognition['artist']}")
+                        for video in videos:
+                            st.video(video['link'])
+
                     else:
-                        st.error("Teach a song!")
+                        st.error("We haven't found this song. Try to uplaod it to the database.")
+
         with st.container(border=True):
             st.write("## Recognize from recording")
             if st.button('Start Recording'):
@@ -199,6 +221,7 @@ with col1:
                 # plt.show()
                 #else:
                 print("Song ID not found in the database.")#debug
+                
            
 
     else :
