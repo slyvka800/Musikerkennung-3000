@@ -21,7 +21,7 @@ import pandas as pd
 # import librosa.display
 # import matplotlib.pyplot as plt
 
-pagetitle = "Musikerkennung42069"
+pagetitle = "Musikerkennung3000"
 
 recogniser = Recogniser()
 db_manager = DataBaseManager()
