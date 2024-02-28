@@ -3,8 +3,6 @@ from pydub import AudioSegment
 # import pyglet ####
 # from pyglet.media import Player####
 import matplotlib.pyplot as plt
-
- 
 from tempfile import NamedTemporaryFile
 from recogniser_class import Recogniser
 from fingerprint_class import Fingerprinting
@@ -12,6 +10,8 @@ from db_manager import DataBaseManager
 import tempfile
 import os,sys
 import librosa
+#from librosa.display import waveplot
+
 
 #import sounddevice 
 import numpy as np
@@ -19,7 +19,10 @@ import pandas as pd
 #import soundfile as sf
 # import librosa
 # import librosa.display
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
+import plotly.graph_objs as go
+from waveform_class import Waveform
+
 
 pagetitle = "Musikerkennung3000"
 
@@ -118,7 +121,7 @@ with col1:
                     print(recognition)
                     if recognition:
                         print("recognition", recognition)
-                        # st.success(f"Song {recognition['title']} recognized") 
+                        st.success(f"Song {recognition['title']} recognized") 
 
                         with st.container(border=True):
 
@@ -137,7 +140,13 @@ with col1:
                             }, index=[0])
                             st.table(df)
 
+                        audio_data, sr = librosa.load(path)
 
+                        # Plots the waveform
+                        wv = Waveform(audio_data, sr)
+
+                        # Plot waveform
+                        wv.plot_waveform()
                         #  # Processes audio data for histogram
                         # histogram, bin_edges = process_audio_for_histogram(recognition, num_bins=10)
             
@@ -150,16 +159,17 @@ with col1:
                         # plt.title('Histogram')
 
                         # st.pyplot()
-                        histogram, bin_edges = process_audio_for_histogram(read_audio_file(path), num_bins=10)
-                        if histogram is not None and bin_edges is not None:
-                            # Plot histogram
-                            fig, ax = plt.subplots()
-                            plt.bar(bin_edges[:-1], histogram, width=1)
-                            plt.xlabel('Bins')
-                            plt.ylabel('Frequency')
-                            plt.title('Histogram of Recognized Song')
-                            st.pyplot(fig)  # Display the histogram in Streamlit
-
+                        # histogram, bin_edges = process_audio_for_histogram(read_audio_file(path), num_bins=10)
+                        # if histogram is not None and bin_edges is not None:
+                        #     # Plot histogram
+                        #     fig, ax = plt.subplots()
+                        #     plt.bar(bin_edges[:-1], histogram, width=1)
+                        #     plt.xlabel('Bins')
+                        #     plt.ylabel('Frequency')
+                        #     plt.title('Histogram of Recognized Song')
+                        #     st.pyplot(fig)  # Display the histogram in Streamlit
+                    else:
+                        st.error("Teach a song!")
         with st.container(border=True):
             st.write("## Recognize from recording")
             if st.button('Start Recording'):
@@ -191,7 +201,6 @@ with col1:
 
 with col2:
     st.write("Include Output, History and Song Info here")
-
 
 
 
