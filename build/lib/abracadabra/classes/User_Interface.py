@@ -22,35 +22,37 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.graph_objs as go
 from waveform_class import Waveform
-
+from microfon_class import Microfon
+from waveform_class import Histogram
 
 pagetitle = "Musikerkennung3000"
 
 recogniser = Recogniser()
 db_manager = DataBaseManager()
 fingerprint_ = Fingerprinting
+microfon = Microfon
 
-def process_audio_for_histogram(audio_data, num_bins=10):
-    try:
-        # Convert audio data to numpy array
-        audio_array = np.array(audio_data)
+# def process_audio_for_histogram(audio_data, num_bins=10):
+#     try:
+#         # Convert audio data to numpy array
+#         audio_array = np.array(audio_data)
 
-        # Calculate histogram
-        histogram, bin_edges = np.histogram(audio_array, bins=num_bins)
-        return histogram, bin_edges
-    except Exception as e:
-        st.error(f"Error processing audio data: {e}")
-        return None, None
+#         # Calculate histogram
+#         histogram, bin_edges = np.histogram(audio_array, bins=num_bins)
+#         return histogram, bin_edges
+#     except Exception as e:
+#         st.error(f"Error processing audio data: {e}")
+#         return None, None
     
 
-def read_audio_file(audio_file_path, sr=44100):
-    try:
-        # Load audio file
-        audio_data, _ = librosa.load(audio_file_path, sr=sr)
-        return audio_data
-    except Exception as e:
-        print(f"Error reading audio file: {e}")
-        return None
+# def read_audio_file(audio_file_path, sr=44100):
+#     try:
+#         # Load audio file
+#         audio_data, _ = librosa.load(audio_file_path, sr=sr)
+#         return audio_data
+#     except Exception as e:
+#         print(f"Error reading audio file: {e}")
+#         return None
 
 # def process_audio_for_histogram(audio_data, num_bins=10):
 #     # Converts audio data to numpy array (assuming mono audio)
@@ -159,15 +161,17 @@ with col1:
                         # plt.title('Histogram')
 
                         # st.pyplot()
-                        # histogram, bin_edges = process_audio_for_histogram(read_audio_file(path), num_bins=10)
-                        # if histogram is not None and bin_edges is not None:
-                        #     # Plot histogram
-                        #     fig, ax = plt.subplots()
-                        #     plt.bar(bin_edges[:-1], histogram, width=1)
-                        #     plt.xlabel('Bins')
-                        #     plt.ylabel('Frequency')
-                        #     plt.title('Histogram of Recognized Song')
-                        #     st.pyplot(fig)  # Display the histogram in Streamlit
+                        hstr = Histogram(selected_snippet)
+                        histogram, bin_edges = hstr.process_audio_for_histogram(hstr.read_audio_file(path))
+                        if histogram is not None and bin_edges is not None:
+                            # Plot histogram
+                            fig, ax = plt.subplots()
+                            plt.bar(bin_edges[:-1], histogram, width=1)
+                            plt.xlabel('Amplitude')
+                            plt.ylabel('Frequency')
+                            plt.title('Histogram of Recognized Song')
+                            st.pyplot(fig)  # Display the histogram in Streamlit
+     
                     else:
                         st.error("Teach a song!")
         with st.container(border=True):
@@ -175,7 +179,10 @@ with col1:
             if st.button('Start Recording'):
                 #function to record audio from microphone and save it in recording.wav
                 #st.write("Recording complete")
-                st.audio('recording.wav', format='audio/wav')
+               # selected_audio = st.file_uploader("Upload file to recognize song", type=["mp3", "wav"])
+
+                #microfon.recording_function(selected_audio,5)
+                #st.audio(selected_audio, format='audio/wav')
                 #insert logic to recognize song from recording here
                 #file has to be fingerprinted, hashes have to be compared to the database
                 #if a match is found, the song has to be displayed
@@ -201,7 +208,7 @@ with col1:
 
 with col2:
     st.write("Include Output, History and Song Info here")
-
+    
 
 
 
