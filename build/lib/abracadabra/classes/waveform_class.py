@@ -53,4 +53,48 @@ class Waveform:
         except Exception as e:
             st.error(f"Error plotting waveform: {e}")
 
+class Histogram:
 
+    def __init__(self, audio_data):
+        self.audio_data = audio_data
+
+    def process_audio_for_histogram(self, audio_data):
+        try:
+            num_bins=10
+            # Convert audio data to numpy array
+            audio_array = np.array(audio_data)
+
+            # Calculate histogram
+            histogram, bin_edges = np.histogram(audio_array, bins=num_bins)
+            return histogram, bin_edges
+        except Exception as e:
+            st.error(f"Error processing audio data: {e}")
+            return None, None
+
+    def read_audio_file(self, audio_file_path):
+        try:
+            sr=44100
+            # Load audio file
+            audio_data, _ = librosa.load(audio_file_path, sr=sr)
+            return audio_data
+        except Exception as e:
+            print(f"Error reading audio file: {e}")
+            return None
+
+
+#if __name__ == " __main__":
+    # # Create an instance of the Histogram class
+    # histogram_instance = Histogram("../../../../Samples/337146__erokia__timelift-rhodes-piano.wav")
+
+    # # Process the audio data for the histogram
+    # histogram, bin_edges = histogram_instance.process_audio_for_histogram(num_bins=10)
+
+    # # Check if the histogram and bin_edges are not None
+    # if histogram is not None and bin_edges is not None:
+    #     # Plot histogram
+    #     fig, ax = plt.subplots()
+    #     plt.bar(bin_edges[:-1], histogram, width=1)
+    #     plt.xlabel('Amplitude')
+    #     plt.ylabel('Frequency')
+    #     plt.title('Histogram of Recognized Song')
+    #     st.pyplot(fig)  # Display the histogram in Streamlit
