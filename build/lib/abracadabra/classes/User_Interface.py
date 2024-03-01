@@ -1,8 +1,9 @@
 import streamlit as st
 from pydub import AudioSegment
 from tempfile import NamedTemporaryFile
+from record_function import recording_function
 
-pagetitle = "Musikerkennung42069"
+pagetitle = "Musikerkennung3000"
 
 st.set_page_config(layout="wide", page_title=pagetitle, page_icon=":headphones:")
 st.write(f"# {pagetitle}")
@@ -58,17 +59,20 @@ with col1:
             if st.button('Start Recording'):
                 #function to record audio from microphone and save it in recording.wav
                 #st.write("Recording complete")
+                recording_function('recording.wav', 5)
                 st.audio('recording.wav', format='audio/wav')
+                #VELLA ODER PAVLO#
+                #aufgenommenes audio ist in recording.wav gespeichert, muss man noch hashen und recognizen
+
                 #insert logic to recognize song from recording here
                 #file has to be fingerprinted, hashes have to be compared to the database
                 #if a match is found, the song has to be displayed
                 #song info should be read from a separate table in the database
                 #if no match is found, an error message has to be displayed
-                print ("Recognizing song from recording...") #debug
+
                 #if found:
-                print("Song recognized") #debug
                 #else:
-                print("Song ID not found in the database.")#debug
+
 
     else :
         st.write(f"## About {pagetitle}")
