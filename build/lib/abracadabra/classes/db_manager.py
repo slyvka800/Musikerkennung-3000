@@ -55,7 +55,7 @@ class DataBaseManager:
     def delete_song_id(self, id):
         self.song_info.remove(doc_ids=[id])
 
-    def get_matches(self, new_hashes_data):
+    def get_matches(self, new_hashes_data, threshold):
         h_dict = {}
         new_hashes = []
         for h, t, _ in new_hashes_data:
@@ -67,7 +67,6 @@ class DataBaseManager:
         results = self.hashes.search(Query().hash.one_of(new_hashes))
 
         # check if enough mathces have been found
-        threshold = 800 
         print(len(results))
         if len(results) < threshold:
             return None

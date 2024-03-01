@@ -34,7 +34,6 @@ pagetitle = "Musikerkennung3000"
 recogniser = Recogniser()
 db_manager = DataBaseManager()
 fingerprint_ = Fingerprinting
-microfon = Microfon
 
 # def process_audio_for_histogram(audio_data, num_bins=10):
 #     try:
@@ -199,9 +198,55 @@ with col1:
         with st.container(border=True):
             st.write("## Recognize from recording")
             if st.button('Start Recording'):
+                st.text("Recording for 10 seconds")
+                temp_dir = tempfile.mkdtemp()
+                path = os.path.join(temp_dir, "microfon_rec.mp3")
+                microfon = Microfon(path, 10)
+                microfon.recording_function()
+                recognition = recogniser.recognise_song(path, threshold=30)
+                if recognition:
+                        print("recognition", recognition)
+                        st.success(f"Song {recognition['title']} recognized") 
+
+                        with st.container(border=True):
+
+                            st.write("## Music Library") 
+                            st.write("### List of Songs")
+                            df = pd.DataFrame({
+                                'Title': recognition['title'],
+                                'Album': recognition['album'],
+                                'Artist': recognition['artist']
+                            }, index=[0])
+                            st.table(df)
+
+                        audio_data, sr = librosa.load(path)
+
+                        # Plots the waveform
+                        wv = Waveform(audio_data, sr)
+
+                        # Plot waveform
+                        wv.plot_waveform()
+
+                        hstr = Histogram(selected_snippet)
+                        histogram, bin_edges = hstr.process_audio_for_histogram(hstr.read_audio_file(path))
+                        if histogram is not None and bin_edges is not None:
+                            # Plot histogram
+                            fig, ax = plt.subplots()
+                            plt.bar(bin_edges[:-1], histogram, width=1)
+                            plt.xlabel('Amplitude')
+                            plt.ylabel('Frequency')
+                            plt.title('Histogram of Recognized Song')
+                            st.pyplot(fig)  # Display the histogram in Streamlit
+
+                        videos = search_youtube(f"{recognition['title']} {recognition['album']} {recognition['artist']}")
+                        for video in videos:
+                            st.video(video['link'])
+
+                else:
+                    st.error("We haven't found this song. Try to uplaod it to the database.")
                 #function to record audio from microphone and save it in recording.wav
                 #st.write("Recording complete")
-               # selected_audio = st.file_uploader("Upload file to recognize song", type=["mp3", "wav"])
+                # selected_audio = st.file_uploader("Upload file to recognize song", type=["mp3", "wav"])
 
                 #microfon.recording_function(selected_audio,5)
                 #st.audio(selected_audio, format='audio/wav')
@@ -210,9 +255,9 @@ with col1:
                 #if a match is found, the song has to be displayed
                 #song info should be read from a separate table in the database
                 #if no match is found, an error message has to be displayed
-                print ("Recognizing song from recording...") #debug
+                # print ("Recognizing song from recording...") #debug
                 #if found:
-                print("Song recognized") #debug
+                # print("Song recognized") #debug
                 # plt.figure(figsize=(14, 5))
                 # librosa.display.waveshow(y, sr=sr)
                 # plt.xlabel('Zeit (s)')
@@ -220,18 +265,13 @@ with col1:
                 # plt.title('Waveform des Musikstücks')
                 # plt.show()
                 #else:
-                print("Song ID not found in the database.")#debug
-                
-           
+                # print("Song ID not found in the database.")#debug
 
     else :
         st.write(f"## About {pagetitle}")
         st.write(f"{pagetitle} is a song recognition app that uses audio fingerprinting to recognize songs. It uses the Fingerprinting algorithm from the existing project abracadabra to generate hashes from audio files and stores them in a database. When a snippet is uploaded, it generates hashes from the snippet and compares them to the database to find a match. It can also record audio from the microphone and recognize songs from it.")
         st.write(f"{pagetitle} has been developed by Pavlo Slyvka, Vella Nedelcheva and Benedikt Reimeir as a final project for the course Softwaredesign at the MCI Innsbruck.")
 
-with col2:
-    st.write("Include Output, History and Song Info here")
-    
 
 
 

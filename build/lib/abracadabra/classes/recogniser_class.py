@@ -54,17 +54,17 @@ class Recogniser:
                 best_score = score
                 matched_song = song_id
         print(f"score:{score}")
-        if score > 300:
-            return matched_song
-        else:
-            return None
+        # if score > 300:
+        return matched_song
+        # else:
+        #     return None
 
     
-    def recognise_song(self, filename):
+    def recognise_song(self, filename, threshold=800):
 
         hashes = self.fingerprinting.fingerprint_file(filename)
 
-        matches = self.db_manager.get_matches(hashes)
+        matches = self.db_manager.get_matches(hashes, threshold)
         if not matches:
             return None
         matched_song = self.best_match(matches)
