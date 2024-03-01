@@ -20,7 +20,7 @@ from fingerprint_class import Fingerprinting
 
 KNOWN_EXTENSIONS = ["mp3", "wav", "flac", "m4a"]
 
-
+###
 class Recogniser:
 
     def __init__(self):
