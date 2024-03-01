@@ -51,10 +51,10 @@ class Recogniser:
                 best_score = score
                 matched_song = song_id
         print(f"score:{score}")
-        # if score > 300:
-        return matched_song
-        # else:
-        #     return None
+        if score > 300:
+            return matched_song
+        else:
+             return None
 
     
     def recognise_song(self, filename, threshold=800):
