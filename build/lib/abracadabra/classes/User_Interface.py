@@ -203,7 +203,7 @@ with col1:
                 path = os.path.join(temp_dir, "microfon_rec.mp3")
                 microfon = Microfon(path, 10)
                 microfon.recording_function()
-                recognition = recogniser.recognise_song(path, threshold=30)
+                recognition = recogniser.recognise_song(path, threshold=20)
                 if recognition:
                         print("recognition", recognition)
                         st.success(f"Song {recognition['title']} recognized") 
