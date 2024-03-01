@@ -150,7 +150,7 @@ class Fingerprinting:
 
 if __name__ == "__main__":
     
-    # Loads audio file
+    # #####Loads audio file
     audio_file = "../../../../Samples/test.wav"
     audio = AudioSegment.from_wav(audio_file)
 
