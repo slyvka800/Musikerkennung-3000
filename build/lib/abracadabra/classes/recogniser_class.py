@@ -68,19 +68,18 @@ class Recogniser:
         if not matches:
             return None
         matched_song = self.best_match(matches)
-        #print(f"macthed_song: {matched_song}")
 
         if matched_song:
             info = self.db_manager.get_song_info(matched_song)
             print("info", info)
         else: 
             info = None
-        #print(f"info: {info}")
+       
 
         if info is not None:
-            #print("in if !")
+          
             return info
-        #print("!matched song")
+      
         return matched_song
 
     def compare(self):
