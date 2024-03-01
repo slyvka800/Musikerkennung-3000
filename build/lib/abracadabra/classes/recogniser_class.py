@@ -13,11 +13,8 @@ from tinydb import Query
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-import fingerprint as fp  # Hier wurde der Import geändert
-import storage
 import settings
 
-from record import record_audio
 from db_manager import DataBaseManager
 from fingerprint_class import Fingerprinting
 

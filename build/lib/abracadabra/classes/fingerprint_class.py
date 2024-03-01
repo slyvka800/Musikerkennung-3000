@@ -13,11 +13,7 @@ import numpy as np
 # Importing modules "from" the scripts package
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-import fingerprint as fp  # Hier wurde der Import geändert
 import settings
-from record import record_audio
-#from storage import store_song, get_matches, get_info_for_song_id, song_in_db, checkpoint_db
-#from fingerprint import find_peaks, my_spectrogram
 
 
 class Fingerprinting:
